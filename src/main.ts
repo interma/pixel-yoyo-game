@@ -21,7 +21,10 @@ const config: Phaser.Types.Core.GameConfig = {
   pixelArt: true, // 启用像素艺术模式，保持像素清晰
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    parent: 'game',
+    width: 800,
+    height: 600
   }
 };
 

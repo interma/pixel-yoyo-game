@@ -4,6 +4,7 @@ import type { CharacterConfig } from '../characters';
 import { createAllCharacterTextures } from '../characters';
 import { createEnemyTextures, createCoinTexture } from '../common/GameAssets';
 import { setupCheatListener, CHEAT_CODES } from '../common/CheatSystem';
+import { TouchControls, createStandardControls } from '../common/TouchControls';
 
 export default class CoinChaserScene extends Phaser.Scene {
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -30,6 +31,9 @@ export default class CoinChaserScene extends Phaser.Scene {
   private shieldGraphics: Phaser.GameObjects.Graphics[] = [];
   private lightningGraphics: Phaser.GameObjects.Graphics[] = [];
   private lightningTimers: Phaser.Time.TimerEvent[] = [];
+  
+  // 触摸控制（移动端）
+  private touchControls!: TouchControls;
   
   // 角色选择相关
   private isInSelectionMode: boolean = true;
@@ -92,6 +96,9 @@ export default class CoinChaserScene extends Phaser.Scene {
 
     // 创建F键用于飞行
     this.fKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+
+    // 创建触摸控制（移动端）
+    this.touchControls = createStandardControls(this);
 
     // 创建UI
     this.createUI();
@@ -225,25 +232,39 @@ export default class CoinChaserScene extends Phaser.Scene {
       }
     });
 
-    // 玩家1移动（方向键）
+    // 玩家1移动（方向键 + 触摸摇杆）
     if (this.player) {
+      // 键盘输入
+      let moveX = 0;
       if (this.cursors.left.isDown) {
-        this.player.setVelocityX(-200);
-        this.player.flipX = true;
+        moveX = -1;
       } else if (this.cursors.right.isDown) {
-        this.player.setVelocityX(200);
-        this.player.flipX = false;
+        moveX = 1;
+      }
+      
+      // 触摸摇杆输入（优先级更高）
+      const joystickX = this.touchControls.getJoystickX();
+      if (Math.abs(joystickX) > 0.2) {
+        moveX = joystickX;
+      }
+      
+      // 应用移动
+      if (moveX !== 0) {
+        this.player.setVelocityX(moveX * 200);
+        this.player.flipX = moveX < 0;
       } else {
         this.player.setVelocityX(0);
       }
 
-      // 玩家1跳跃
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
+      // 玩家1跳跃（键盘 + 触摸按钮）
+      const touchJump = this.touchControls.isButtonPressed('jump');
+      if ((this.cursors.up.isDown || touchJump) && this.player.body.touching.down) {
         this.player.setVelocityY(-500);
       }
 
-      // 玩家1飞行（长按F键）
-      if (this.fKey.isDown) {
+      // 玩家1飞行（长按F键 + 触摸飞行按钮）
+      const touchFly = this.touchControls.isButtonPressed('fly');
+      if (this.fKey.isDown || touchFly) {
         this.player.setVelocityY(-300);
       }
     }

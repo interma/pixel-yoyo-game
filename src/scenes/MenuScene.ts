@@ -14,7 +14,7 @@ export default class MenuScene extends Phaser.Scene {
     graphics.fillRect(0, 0, width, height);
 
     // 标题
-    this.add.text(width / 2, 80, '🎮 YoYo游戏中心', {
+    this.add.text(width / 2, 80, '👾 YoYo的像素冒险', {
       fontSize: '56px',
       color: '#00d4ff',
       fontFamily: 'Arial',

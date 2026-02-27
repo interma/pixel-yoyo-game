@@ -4,6 +4,7 @@ import type { CharacterConfig } from '../characters';
 import { createAllCharacterTextures } from '../characters';
 import { createEnemyTextures } from '../common/GameAssets';
 import { setupCheatListener, CHEAT_CODES } from '../common/CheatSystem';
+import { TouchControls, createStandardControls } from '../common/TouchControls';
 
 export default class ScrollRunnerScene extends Phaser.Scene {
   private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -27,6 +28,9 @@ export default class ScrollRunnerScene extends Phaser.Scene {
   private distanceTraveled: number = 0;
   private isInvincible: boolean = false;
   private shieldGraphics: Phaser.GameObjects.Graphics[] = [];
+
+  // 触摸控制（移动端）
+  private touchControls!: TouchControls;
 
   // 角色选择相关
   private isInSelectionMode: boolean = true;
@@ -82,6 +86,9 @@ export default class ScrollRunnerScene extends Phaser.Scene {
       right: Phaser.Input.Keyboard.KeyCodes.D
     });
     this.fKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+
+    // 创建触摸控制（移动端）
+    this.touchControls = createStandardControls(this);
 
     // 监听秘籍输入（使用通用模块）
     setupCheatListener(this, (code) => {
@@ -475,7 +482,7 @@ export default class ScrollRunnerScene extends Phaser.Scene {
       });
     }
 
-    // 玩家1控制（方向键）
+    // 玩家1控制（方向键 + 触摸摇杆）
     if (this.player && this.player.body) {
       // 玩家自动向前移动（相对于世界）
       const minX = this.cameras.main.scrollX + 50;
@@ -483,22 +490,35 @@ export default class ScrollRunnerScene extends Phaser.Scene {
         this.player.x = minX;
       }
 
-      // 左右移动
+      // 左右移动 - 键盘 + 触摸摇杆
+      let moveX = 0;
       if (this.cursors.left.isDown) {
-        this.player.setVelocityX(-150);
+        moveX = -1;
       } else if (this.cursors.right.isDown) {
-        this.player.setVelocityX(150);
+        moveX = 1;
+      }
+      
+      // 触摸摇杆输入（优先级更高）
+      const joystickX = this.touchControls.getJoystickX();
+      if (Math.abs(joystickX) > 0.2) {
+        moveX = joystickX;
+      }
+      
+      if (moveX !== 0) {
+        this.player.setVelocityX(moveX * 150);
       } else {
         this.player.setVelocityX(0);
       }
 
-      // 跳跃
-      if (this.cursors.up.isDown && this.player.body.touching.down) {
+      // 跳跃 - 键盘 + 触摸按钮
+      const touchJump = this.touchControls.isButtonPressed('jump');
+      if ((this.cursors.up.isDown || touchJump) && this.player.body.touching.down) {
         this.player.setVelocityY(-450);
       }
 
-      // 飞行（长按F键）
-      if (this.fKey.isDown) {
+      // 飞行（长按F键 + 触摸飞行按钮）
+      const touchFly = this.touchControls.isButtonPressed('fly');
+      if (this.fKey.isDown || touchFly) {
         this.player.setVelocityY(-300);
       }
     }

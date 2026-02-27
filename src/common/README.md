@@ -4,7 +4,92 @@
 
 ## 📦 模块列表
 
-### 1. GameAssets.ts - 游戏资源创建
+### 1. TouchControls.ts - 移动端触摸控制 🆕
+
+为移动设备提供虚拟摇杆和按钮控制。
+
+**主要类和函数：**
+
+```typescript
+// 触摸控制器类
+class TouchControls {
+  createJoystick(config: VirtualJoystickConfig): void
+  createButton(config: VirtualButtonConfig): void
+  isButtonPressed(key: string): boolean
+  getJoystickX(): number  // 返回 -1 到 1
+  getJoystickY(): number  // 返回 -1 到 1
+  setVisible(visible: boolean): void
+  destroy(): void
+}
+
+// 快速创建标准控制（摇杆+跳跃+飞行按钮）
+createStandardControls(scene: Phaser.Scene): TouchControls
+
+// 检测是否为移动设备
+isMobileDevice(): boolean
+```
+
+**使用示例：**
+
+```typescript
+import { createStandardControls } from '../common/TouchControls';
+
+class MyScene extends Phaser.Scene {
+  private touchControls!: TouchControls;
+  
+  create() {
+    // 创建标准触摸控制（仅在移动设备上显示）
+    this.touchControls = createStandardControls(this);
+  }
+  
+  update() {
+    // 读取摇杆输入
+    const moveX = this.touchControls.getJoystickX();
+    if (Math.abs(moveX) > 0.2) {
+      this.player.setVelocityX(moveX * 200);
+    }
+    
+    // 检查按钮状态
+    if (this.touchControls.isButtonPressed('jump')) {
+      this.player.setVelocityY(-450);
+    }
+    
+    if (this.touchControls.isButtonPressed('fly')) {
+      this.player.setVelocityY(-300);
+    }
+  }
+}
+```
+
+**自定义控制：**
+
+```typescript
+// 创建自定义摇杆
+const controls = new TouchControls(this);
+controls.createJoystick({
+  x: 100,
+  y: 500,
+  radius: 70,
+  baseColor: 0x666666,
+  stickColor: 0xffffff,
+  alpha: 0.6
+});
+
+// 创建自定义按钮
+controls.createButton({
+  key: 'attack',
+  x: 700,
+  y: 500,
+  radius: 40,
+  label: '攻击',
+  color: 0xff0000,
+  alpha: 0.5
+});
+```
+
+---
+
+### 2. GameAssets.ts - 游戏资源创建
 
 创建游戏中常用的纹理资源。
 
