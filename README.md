@@ -150,7 +150,35 @@ npm run build
 
 构建后的文件将在 `dist` 目录中。
 
-### 📱 移动端测试
+### �️ 使用 Makefile（推荐）
+
+项目提供了 Makefile 来简化常用命令：
+
+```bash
+# 查看所有可用命令
+make help
+
+# 常用命令
+make install        # 安装依赖
+make dev           # 启动开发服务器
+make build         # 构建生产版本
+make test          # 运行所有测试
+make clean         # 清理构建文件
+
+# 首次设置（安装依赖 + 测试工具）
+make setup
+
+# 提交前检查（lint + test + build）
+make check
+```
+
+**完整命令列表**：
+- **开发**: `make dev`, `make build`, `make preview`
+- **测试**: `make test`, `make test-unit`, `make test-e2e`, `make test-ui`
+- **工具**: `make lint`, `make format`, `make clean`
+- **其他**: `make stats`（查看项目统计）, `make watch`（监控测试）
+
+### �📱 移动端测试
 
 **方法1：使用浏览器开发者工具**
 1. 打开 Chrome DevTools (F12)
@@ -373,6 +401,60 @@ const games = [
 - **秘籍码**: 在 `src/common/CheatSystem.ts` 的 `CHEAT_CODES` 中添加新秘籍
 - **物理参数**: 修改 `src/main.ts` 中的 Phaser 配置
 
+## 🧪 测试
+
+测试基础设施已经配置完成！包含单元测试（Vitest）和E2E测试（Playwright）。
+
+### 快速运行
+
+```bash
+# 运行单元测试（7个测试）
+make test-unit
+
+# 运行E2E测试（8个测试）
+make test-e2e
+
+# 运行所有测试
+make test
+
+# 监控模式（自动重测）
+make watch
+```
+
+### 测试文档
+
+- **[TEST_GUIDE.md](TEST_GUIDE.md)** - 快速测试指南（推荐从这里开始）
+- **[TESTING.md](TESTING.md)** - 完整测试策略和最佳实践
+
+### 当前测试状态
+
+**✅ 单元测试**: 7个测试全部通过（游戏配置、生命值系统、状态管理）  
+**✅ E2E测试**: 14个测试全部通过
+- 完整游戏流程：金币追逐单/双人 + 古堡逃亡单/双人
+- 菜单导航：游戏选择、玩家数量选择、角色选择
+- Bug回归：3个已修复bug的回归测试
+
+所有测试运行时间：~21秒
+
+### 详细文档
+
+- **[TEST_GUIDE.md](TEST_GUIDE.md)** - 快速测试指南（推荐从这里开始）
+- **[E2E_COVERAGE.md](E2E_COVERAGE.md)** - E2E测试完整覆盖报告
+- **[TESTING.md](TESTING.md)** - 完整测试策略和最佳实践
+
+查看 **[TESTING.md](TESTING.md)** 获取：
+- ✅ 完整的手动测试清单
+- 🤖 自动化测试示例代码
+- 🐛 Bug回归测试策略
+- 📊 测试覆盖率目标
+- 🔄 CI/CD集成指南
+
+**关键测试用例**：
+- 场景切换不会导致状态混乱
+- 玩家选择流程一次点击生效
+- 游戏按键不会触发选择界面
+- 返回菜单后重新进入游戏正常工作
+
 ## 📝 许可证
 
 本项目仅供教育和学习目的。
@@ -397,8 +479,10 @@ const games = [
 - [x] 模块化角色系统
 - [x] 抽取通用游戏资源
 - [x] 统一秘籍系统
-- [ ] 添加单元测试
+- [x] 完善测试指南和策略文档
+- [ ] 添加自动化测试（单元测试 + E2E测试）
 - [ ] 完善 TypeScript 类型定义
+- [ ] CI/CD 集成
 
 ## 🤝 参与贡献
 

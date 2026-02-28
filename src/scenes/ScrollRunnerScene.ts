@@ -800,7 +800,7 @@ export default class ScrollRunnerScene extends Phaser.Scene {
       color: '#c99fff'
     }).setOrigin(0.5).setScrollFactor(0).setDepth(200);
 
-    const continueText = this.add.text(400, 400, '按任意键开始', {
+    const continueText = this.add.text(400, 400, '按 Enter/Space 开始', {
       ...TEXT_STYLES.TITLE_SMALL,
       color: '#00ff00'
     }).setOrigin(0.5).setScrollFactor(0).setDepth(200);
@@ -820,13 +820,23 @@ export default class ScrollRunnerScene extends Phaser.Scene {
     const handleContinue = () => {
       this.clearSelectionUI();
       // 延迟显示选择界面，确保当前点击事件完全结束
-      this.time.delayedCall(50, () => {
+      this.time.delayedCall(100, () => {
         this.showPlayerCountSelection();
       });
     };
 
-    // 监听任意键
-    this.input.keyboard!.once('keydown', handleContinue);
+    // 监听特定按键（Enter/Space）而不是任意按键，避免与游戏中的按键冲突
+    const enterKey = this.input.keyboard!.addKey('ENTER');
+    const spaceKey = this.input.keyboard!.addKey('SPACE');
+    
+    const keyHandler = () => {
+      enterKey.off('down', keyHandler);
+      spaceKey.off('down', keyHandler);
+      handleContinue();
+    };
+    
+    enterKey.once('down', keyHandler);
+    spaceKey.once('down', keyHandler);
     
     // 监听鼠标点击和触摸事件
     this.input.once('pointerdown', handleContinue);
