@@ -1,12 +1,17 @@
-# 🎮 像素游戏合集
-
-一个基于 Phaser 3 和 TypeScript 开发的复古风格游戏合集项目，灵感来自经典的 8-bit/16-bit 游戏。
-
+# 🎮 呦呦的像素冒险
 ![游戏风格](https://img.shields.io/badge/风格-像素艺术-blue)
 ![引擎](https://img.shields.io/badge/引擎-Phaser%203-green)
 ![语言](https://img.shields.io/badge/语言-TypeScript-blue)
 ![游戏数量](https://img.shields.io/badge/游戏-2个-orange)
 ![模块化](https://img.shields.io/badge/架构-模块化-brightgreen)
+
+<img src="public/screen.png" alt="游戏截图" width="600">
+
+## 👾 介绍
+
+我和儿子完全使用Copilot开发的一个像素游戏合集。技术栈基于Phaser3和TypeScript，灵感来自经典的80年代FC像素游戏。
+
+最新版本已经部署到了Vercel上，[点击这里](https://yoyo-pixel.vercel.app/)访问。
 
 ## ✨ 项目亮点
 
@@ -399,8 +404,3 @@ const games = [
 
 欢迎 Fork 本项目并添加你自己的功能！
 
----
-
-**尽情享受游戏吧！🎮✨**
-
-使用 Phaser 3 和 TypeScript 用心制作 ❤️
